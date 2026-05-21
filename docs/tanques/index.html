@@ -2,23 +2,31 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANQUES — Qr Groupe Seb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0969da">
+    <title>TANQUES — QR Groupe SEB</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <button class="menu-toggle" aria-label="Abrir menú">☰</button>
+    <div class="sidebar-backdrop" aria-hidden="true"></div>
+    <header class="topbar">
+        <button class="menu-toggle" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">☰</button>
+        <span class="topbar-title">TANQUES</span>
+    </header>
     <div class="layout">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <a href="../index.html">
-                    <h1>Qr Groupe Seb</h1>
+                    <h1>QR Groupe SEB</h1>
                 </a>
+                <button class="sidebar-close" aria-label="Cerrar menú">✕</button>
             </div>
             <nav class="nav"><ul class="nav-list">
 <li class="nav-group">
+<div class="nav-cat-row">
 <button class="nav-cat" aria-expanded="false">EQUIPOS</button>
-<a class="nav-cat-link" href="../equipos/index.html">Ver categoría</a>
+</div>
+<a class="nav-cat-link" href="../equipos/index.html">Ver categoría completa →</a>
 <ul class="nav-items">
 <li><a href="../equipos/100-P-01A.html">100-P-01A</a></li>
 <li><a href="../equipos/100-P-01B.html">100-P-01B</a></li>
@@ -53,8 +61,10 @@
 <li><a href="../equipos/809-P-01.html">809-P-01</a></li>
 </ul></li>
 <li class="nav-group">
+<div class="nav-cat-row">
 <button class="nav-cat" aria-expanded="false">INSTRUMENTOS</button>
-<a class="nav-cat-link" href="../instrumentos/index.html">Ver categoría</a>
+</div>
+<a class="nav-cat-link" href="../instrumentos/index.html">Ver categoría completa →</a>
 <ul class="nav-items">
 <li><a href="../instrumentos/100-AIT-01.html">100-AIT-01</a></li>
 <li><a href="../instrumentos/100-FIT-001.html">100-FIT-001</a></li>
@@ -65,8 +75,10 @@
 <li><a href="../instrumentos/801-LT-002.html">801-LT-002</a></li>
 </ul></li>
 <li class="nav-group">
+<div class="nav-cat-row">
 <button class="nav-cat" aria-expanded="false">TANQUES</button>
-<a class="nav-cat-link" href="../tanques/index.html">Ver categoría</a>
+</div>
+<a class="nav-cat-link" href="../tanques/index.html">Ver categoría completa →</a>
 <ul class="nav-items">
 <li><a href="../tanques/100-TK-01.html">100-TK-01</a></li>
 <li><a href="../tanques/100-TK-02.html">100-TK-02</a></li>
@@ -99,27 +111,87 @@
                 <header class="page-header"><h1>TANQUES</h1>
 <p class="breadcrumb"><a href="../index.html">Inicio</a> / <span>TANQUES</span></p>
 <p class="count">20 elementos</p></header>
-<div class="card-grid">
-<a class="card" href="100-TK-01.html"><h3>100-TK-01</h3><p>100-TK-01</p></a>
-<a class="card" href="100-TK-02.html"><h3>100-TK-02</h3><p>100-TK-02</p></a>
-<a class="card" href="100-TK-03.html"><h3>100-TK-03</h3><p>100-TK-03</p></a>
-<a class="card" href="400-R-01.html"><h3>400-R-01</h3><p>400-R-01</p></a>
-<a class="card" href="500-F-01.html"><h3>500-F-01</h3><p>500-F-01</p></a>
-<a class="card" href="500-F-02.html"><h3>500-F-02</h3><p>500-F-02</p></a>
-<a class="card" href="500-F-03.html"><h3>500-F-03</h3><p>500-F-03</p></a>
-<a class="card" href="500-F-04.html"><h3>500-F-04</h3><p>500-F-04</p></a>
-<a class="card" href="500-TK-01.html"><h3>500-TK-01</h3><p>500-TK-01</p></a>
-<a class="card" href="500-TK-02.html"><h3>500-TK-02</h3><p>500-TK-02</p></a>
-<a class="card" href="600-SD-01.html"><h3>600-SD-01</h3><p>600-SD-01</p></a>
-<a class="card" href="600-TK-01.html"><h3>600-TK-01</h3><p>600-TK-01</p></a>
-<a class="card" href="800-TK-01.html"><h3>800-TK-01</h3><p>800-TK-01</p></a>
-<a class="card" href="801-TK-01.html"><h3>801-TK-01</h3><p>801-TK-01</p></a>
-<a class="card" href="802-TK-01.html"><h3>802-TK-01</h3><p>802-TK-01</p></a>
-<a class="card" href="803-TK-01.html"><h3>803-TK-01</h3><p>803-TK-01</p></a>
-<a class="card" href="805-TK-01.html"><h3>805-TK-01</h3><p>805-TK-01</p></a>
-<a class="card" href="807-TK-01.html"><h3>807-TK-01</h3><p>807-TK-01</p></a>
-<a class="card" href="808-TK-01.html"><h3>808-TK-01</h3><p>808-TK-01</p></a>
-<a class="card" href="809-TK-01.html"><h3>809-TK-01</h3><p>809-TK-01</p></a>
+<div class="accordion">
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">100-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque Homogenizador 1</span></div><a class="acc-cta" href="100-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">100-TK-02</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque Tronco cónico</span></div><a class="acc-cta" href="100-TK-02.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">100-TK-03</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque Homogenizador 2</span></div><a class="acc-cta" href="100-TK-03.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">400-R-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Reactor biológico</span></div><a class="acc-cta" href="400-R-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-F-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Filtro Multimedia</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Retención de sólidos suspendidos</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">D (in) = 21, Hcil (in) =65, material = Polyglass</span></div><a class="acc-cta" href="500-F-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-F-02</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Filtro Multimedia</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Retención de sólidos suspendidos</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">D (in) = 21, Hcil (in) =65, material = Polyglass</span></div><a class="acc-cta" href="500-F-02.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-F-03</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Filtro Carbón activado granular</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Retención de materia orgánica</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">D (in) = 30, Hcil (in) =65 , material = Polyglass</span></div><a class="acc-cta" href="500-F-03.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-F-04</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Filtro C arbón Activado Granular</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Retención de materia orgánica</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">D (in) = 30, Hcil (in) =65, material = Polyglass</span></div><a class="acc-cta" href="500-F-04.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de agua clarificada</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Recepción de agua clarificada del Clarificador</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">IBC, Vt (m3) = 1, Material = PE</span></div><a class="acc-cta" href="500-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-TK-02</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Foso de succión</span></div><a class="acc-cta" href="500-TK-02.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">600-SD-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Filtro Prensa de Alimentación Central</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Deshidratación de Lodos</span></div><div class="acc-row"><span class="acc-row-label">Marca</span><span class="acc-row-value">HDFE XMY20/630-30U</span></div><a class="acc-cta" href="600-SD-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">600-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de lodos</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Recepción de lodos para deshidratación</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">IBC, Vt (m3) = 1, Material = PE</span></div><a class="acc-cta" href="600-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">800-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Coagulante</span></div><a class="acc-cta" href="800-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">801-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Soda Caústica</span></div><a class="acc-cta" href="801-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">802-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Floculante</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Almacenamiento y dosificación de Floculante</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">IBC, Vt (m3) = 1, Material = PRFV</span></div><a class="acc-cta" href="802-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">803-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Deshidratante</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Almacenamiento y deshidratación de Lodos</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">IBC, Vt (m3) = 1, Material = PE</span></div><a class="acc-cta" href="803-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">805-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Hipoclorito de Sodio</span></div><a class="acc-cta" href="805-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">807-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Ácido Sulfúrico</span></div><a class="acc-cta" href="807-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">808-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Bisulfito de Sodio</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Almacenamiento y dosificación de Oxidante</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">Vt (m3) = 1, Vu (m3) = 0.9, D (m) = 1, HT (m) = 1.4, Hu (m) = 1.2, Material = PRFV</span></div><a class="acc-cta" href="808-TK-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">809-TK-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Tanque de Nutrientes</span></div><div class="acc-row"><span class="acc-row-label">Función</span><span class="acc-row-value">Preparación y Dosificación de Nutrientes</span></div><div class="acc-row"><span class="acc-row-label">Especificaciones</span><span class="acc-row-value">Tanque estándar de 250 L, Material = PE</span></div><a class="acc-cta" href="809-TK-01.html">Ver ficha completa →</a></div>
+</div>
 </div>
             </article>
         </main>

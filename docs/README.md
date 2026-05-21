@@ -1,4 +1,4 @@
-# Qr Groupe Seb
+# QR Groupe SEB
 
 Sitio migrado automáticamente desde: https://sites.google.com/view/qr-groupe-seb
 
@@ -14,6 +14,6 @@ URL final: `https://<usuario>.github.io/qr-groupe-seb/`
 
 ## Migración
 
-- **Fecha:** 2026-05-21 10:55:17
+- **Fecha:** 2026-05-21 14:28:35
 - **Páginas:** 62
 - **Categorías:** 3

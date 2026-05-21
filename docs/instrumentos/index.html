@@ -2,23 +2,31 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INSTRUMENTOS — Qr Groupe Seb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0969da">
+    <title>INSTRUMENTOS — QR Groupe SEB</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <button class="menu-toggle" aria-label="Abrir menú">☰</button>
+    <div class="sidebar-backdrop" aria-hidden="true"></div>
+    <header class="topbar">
+        <button class="menu-toggle" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">☰</button>
+        <span class="topbar-title">INSTRUMENTOS</span>
+    </header>
     <div class="layout">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <a href="../index.html">
-                    <h1>Qr Groupe Seb</h1>
+                    <h1>QR Groupe SEB</h1>
                 </a>
+                <button class="sidebar-close" aria-label="Cerrar menú">✕</button>
             </div>
             <nav class="nav"><ul class="nav-list">
 <li class="nav-group">
+<div class="nav-cat-row">
 <button class="nav-cat" aria-expanded="false">EQUIPOS</button>
-<a class="nav-cat-link" href="../equipos/index.html">Ver categoría</a>
+</div>
+<a class="nav-cat-link" href="../equipos/index.html">Ver categoría completa →</a>
 <ul class="nav-items">
 <li><a href="../equipos/100-P-01A.html">100-P-01A</a></li>
 <li><a href="../equipos/100-P-01B.html">100-P-01B</a></li>
@@ -53,8 +61,10 @@
 <li><a href="../equipos/809-P-01.html">809-P-01</a></li>
 </ul></li>
 <li class="nav-group">
+<div class="nav-cat-row">
 <button class="nav-cat" aria-expanded="false">INSTRUMENTOS</button>
-<a class="nav-cat-link" href="../instrumentos/index.html">Ver categoría</a>
+</div>
+<a class="nav-cat-link" href="../instrumentos/index.html">Ver categoría completa →</a>
 <ul class="nav-items">
 <li><a href="../instrumentos/100-AIT-01.html">100-AIT-01</a></li>
 <li><a href="../instrumentos/100-FIT-001.html">100-FIT-001</a></li>
@@ -65,8 +75,10 @@
 <li><a href="../instrumentos/801-LT-002.html">801-LT-002</a></li>
 </ul></li>
 <li class="nav-group">
+<div class="nav-cat-row">
 <button class="nav-cat" aria-expanded="false">TANQUES</button>
-<a class="nav-cat-link" href="../tanques/index.html">Ver categoría</a>
+</div>
+<a class="nav-cat-link" href="../tanques/index.html">Ver categoría completa →</a>
 <ul class="nav-items">
 <li><a href="../tanques/100-TK-01.html">100-TK-01</a></li>
 <li><a href="../tanques/100-TK-02.html">100-TK-02</a></li>
@@ -99,14 +111,35 @@
                 <header class="page-header"><h1>INSTRUMENTOS</h1>
 <p class="breadcrumb"><a href="../index.html">Inicio</a> / <span>INSTRUMENTOS</span></p>
 <p class="count">7 elementos</p></header>
-<div class="card-grid">
-<a class="card" href="100-AIT-01.html"><h3>100-AIT-01</h3><p>100-AIT-01</p></a>
-<a class="card" href="100-FIT-001.html"><h3>100-FIT-001</h3><p>100-FIT-001</p></a>
-<a class="card" href="100-SV-002.html"><h3>100-SV-002</h3><p>100-SV-002</p></a>
-<a class="card" href="200-AIT-01.html"><h3>200-AIT-01</h3><p>200-AIT-01</p></a>
-<a class="card" href="200-AIT-02.html"><h3>200-AIT-02</h3><p>200-AIT-02</p></a>
-<a class="card" href="500-FIT-01.html"><h3>500-FIT-01</h3><p>500-FIT-01</p></a>
-<a class="card" href="801-LT-002.html"><h3>801-LT-002</h3><p>801-LT-002</p></a>
+<div class="accordion">
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">100-AIT-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Controlador, indicador y transmisor de pH</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">GF+</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">100-TK-02 Tanque Reactor</span></div><a class="acc-cta" href="100-AIT-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">100-FIT-001</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Medidor de Flujo magnético</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">Siemens</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">Tubería descarga bomba 100-P-03 A/B</span></div><a class="acc-cta" href="100-FIT-001.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">100-SV-002</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Válvula actuada para descarga del reactor 100-TK-02</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">Bray</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">Descarga del 100-TK-02</span></div><a class="acc-cta" href="100-SV-002.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">200-AIT-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Controlador, indicador y transmisor de pH</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">GF+</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">200-MX-01 Mezclador estático</span></div><a class="acc-cta" href="200-AIT-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">200-AIT-02</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Controlador, indicador y transmisor de pH</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">GF+</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">200-PS-01 Clarificador</span></div><a class="acc-cta" href="200-AIT-02.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">500-FIT-01</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Medidor de Flujo magnético</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">Siemens</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">500-TK-02 Tanque de agua</span></div><a class="acc-cta" href="500-FIT-01.html">Ver ficha completa →</a></div>
+</div>
+<div class="acc-item">
+<button class="acc-header" aria-expanded="false"><span class="acc-title">801-LT-002</span><span class="acc-meta"></span><span class="acc-chevron" aria-hidden="true">›</span></button>
+<div class="acc-body"><div class="acc-row"><span class="acc-row-label">Tipo de Equipo</span><span class="acc-row-value">Sensor y transmisor de Nivel</span></div><div class="acc-row"><span class="acc-row-label">Marca / Modelo</span><span class="acc-row-value">Siemens</span></div><div class="acc-row"><span class="acc-row-label">Ubicación</span><span class="acc-row-value">801-TK-02 Tanque de Preparación de CAL</span></div><a class="acc-cta" href="801-LT-002.html">Ver ficha completa →</a></div>
+</div>
 </div>
             </article>
         </main>
