@@ -1,0 +1,58 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Instalar Dependencias",
+            "type": "shell",
+            "command": "pip3 install -r requirements.txt",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Ejecutar Quick Migrate",
+            "type": "shell",
+            "command": "./quick_migrate.sh",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Migrar QR Groupe SEB (Ejemplo)",
+            "type": "shell",
+            "command": "python3 google_sites_migrator.py https://sites.google.com/view/qr-groupe-seb/EQUIPOS --output example_output",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Limpiar Outputs",
+            "type": "shell",
+            "command": "rm -rf migrated_site* output_* example_output .migration_history",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Ver Historial de Migraciones",
+            "type": "shell",
+            "command": "cat .migration_history 2>/dev/null || echo 'No hay historial aún'",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+    ]
+}

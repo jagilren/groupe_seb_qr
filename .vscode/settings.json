@@ -1,0 +1,28 @@
+{
+    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "python.analysis.typeCheckingMode": "basic",
+    "editor.formatOnSave": true,
+    "editor.rulers": [88],
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/migrated_site*": false,
+        "**/output_*": false
+    },
+    "files.watcherExclude": {
+        "**/migrated_site/**": true,
+        "**/output_*/**": true
+    },
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "python.terminal.activateEnvironment": true,
+    "python.analysis.autoImportCompletions": true,
+    "editor.minimap.enabled": true,
+    "workbench.colorCustomizations": {
+        "terminal.background": "#1E1E1E",
+        "terminal.foreground": "#CCCCCC"
+    }
+}

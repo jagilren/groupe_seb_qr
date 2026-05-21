@@ -1,0 +1,56 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Migrar Google Site",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/google_sites_migrator.py",
+            "console": "integratedTerminal",
+            "args": [
+                "https://sites.google.com/view/qr-groupe-seb/EQUIPOS",
+                "--output",
+                "output_test"
+            ],
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Python: Migrar Google Site (Custom URL)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/google_sites_migrator.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${input:siteUrl}",
+                "--output",
+                "${input:outputDir}"
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Debug Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "siteUrl",
+            "type": "promptString",
+            "description": "URL del Google Site a migrar",
+            "default": "https://sites.google.com/view/"
+        },
+        {
+            "id": "outputDir",
+            "type": "promptString",
+            "description": "Directorio de salida",
+            "default": "migrated_site"
+        }
+    ]
+}
