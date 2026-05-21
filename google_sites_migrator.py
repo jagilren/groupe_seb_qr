@@ -399,19 +399,25 @@ class GoogleSitesMigrator:
         parts.append('</header>')
 
         if page.sections:
+            parts.append('<div class="accordion">')
             for sec in page.sections:
-                parts.append('<section class="info-section">')
-                parts.append(f'<h2>{sec["title"]}</h2>')
                 content = sec.get('content', '').strip()
+                parts.append('<div class="acc-item">')
+                parts.append(
+                    f'<button class="acc-header" aria-expanded="false">'
+                    f'<span class="acc-title">{sec["title"]}</span>'
+                    f'<span class="acc-chevron" aria-hidden="true">›</span></button>'
+                )
+                parts.append('<div class="acc-body">')
                 if content:
-                    # Convertir saltos de línea en párrafos
                     for para in content.split('\n'):
                         para = para.strip()
                         if para:
                             parts.append(f'<p>{para}</p>')
                 else:
-                    parts.append('<p class="empty">—</p>')
-                parts.append('</section>')
+                    parts.append('<p class="empty">Sin datos.</p>')
+                parts.append('</div></div>')
+            parts.append('</div>')
         else:
             parts.append('<p class="empty">Esta página no tiene secciones extraídas.</p>')
 
@@ -923,6 +929,13 @@ body {
     font-size: 13px;
     padding: 4px 0 8px;
 }
+.acc-body p {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+.acc-body p:last-child { margin-bottom: 0; }
 
 /* ---------------- Mobile (<= 900px) ---------------- */
 @media (max-width: 900px) {
