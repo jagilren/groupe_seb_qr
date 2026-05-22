@@ -32,6 +32,21 @@ SITE_TITLE = "QR Groupe SEB"
 SITE_SUBTITLE = "Documentación técnica"
 SITE_URL = "https://jagilren.github.io/groupe_seb_qr/"
 
+# Banner: título centrado entre los dos logos
+BANNER_TITLE_FULL = "Documentación Técnica — PTAR STARnD"
+BANNER_TITLE_SHORT = "PTAR STARnD"
+
+# Placeholders SVG inline (reemplazar por los logos reales después)
+LOGO_RPCI_SVG = """<svg class="banner-logo-svg" viewBox="0 0 140 56" xmlns="http://www.w3.org/2000/svg" aria-label="RPCI">
+  <rect x="2" y="2" width="136" height="52" rx="8" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+  <text x="70" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" letter-spacing="1.5" fill="#0969da" text-anchor="middle">RPCI</text>
+</svg>"""
+
+LOGO_CLIENT_SVG = """<svg class="banner-logo-svg" viewBox="0 0 140 56" xmlns="http://www.w3.org/2000/svg" aria-label="STARnD">
+  <rect x="2" y="2" width="136" height="52" rx="8" fill="#ffffff" stroke="#198754" stroke-width="2"/>
+  <text x="70" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5" fill="#198754" text-anchor="middle">STARnD</text>
+</svg>"""
+
 # Orden fijo de las categorías en el sitio
 CATEGORY_ORDER = ["EQUIPOS", "INSTRUMENTOS", "TANQUES"]
 
@@ -195,7 +210,7 @@ def page_skeleton(
     content_html: str,
     rel_prefix: str,
 ) -> str:
-    """Skeleton HTML completo (head + topbar + sidebar + content)."""
+    """Skeleton HTML completo (head + banner + sidebar + content)."""
     return f"""<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -207,9 +222,18 @@ def page_skeleton(
 </head>
 <body>
     <div class="sidebar-backdrop" aria-hidden="true"></div>
-    <header class="topbar">
+    <header class="banner">
         <button class="menu-toggle" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">☰</button>
-        <span class="topbar-title">{h(topbar_title)}</span>
+        <a class="banner-logo banner-logo-left" href="{rel_prefix}index.html" aria-label="Inicio">
+            {LOGO_RPCI_SVG}
+        </a>
+        <h1 class="banner-title">
+            <span class="banner-title-full">{h(BANNER_TITLE_FULL)}</span>
+            <span class="banner-title-short">{h(BANNER_TITLE_SHORT)}</span>
+        </h1>
+        <div class="banner-logo banner-logo-right" aria-label="Cliente">
+            {LOGO_CLIENT_SVG}
+        </div>
     </header>
     <div class="layout">
         <aside class="sidebar" id="sidebar">
@@ -366,7 +390,8 @@ STYLES_CSS = r""":root {
     --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-hover: 0 4px 12px rgba(0,0,0,0.08);
     --radius: 8px;
-    --topbar-h: 56px;
+    --banner-h: 72px;
+    --banner-h-mobile: 60px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -381,30 +406,46 @@ body {
     -webkit-tap-highlight-color: rgba(9,105,218,0.15);
 }
 
-.layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - var(--banner-h)); }
 
-/* ---------------- Topbar (sólo móvil) ---------------- */
-.topbar {
-    display: none;
+/* ---------------- Banner (corporativo, todas las páginas) ---------------- */
+.banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     position: sticky;
     top: 0;
     z-index: 8;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    height: var(--topbar-h);
-    align-items: center;
-    padding: 0 12px;
-    gap: 8px;
+    height: var(--banner-h);
+    padding: 0 24px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
 }
-.topbar .topbar-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
+.banner-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+.banner-logo-svg {
+    height: 48px;
+    width: auto;
+    display: block;
+}
+.banner-title {
     flex: 1;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.banner-title-short { display: none; }
 
 .menu-toggle {
     display: none;
@@ -412,11 +453,12 @@ body {
     border: 0;
     width: 44px;
     height: 44px;
-    font-size: 22px;
+    font-size: 24px;
     cursor: pointer;
     border-radius: var(--radius);
     color: var(--text);
     line-height: 1;
+    flex-shrink: 0;
 }
 .menu-toggle:hover { background: var(--bg-alt); }
 
@@ -438,8 +480,8 @@ body {
     padding: 24px 0;
     overflow-y: auto;
     position: sticky;
-    top: 0;
-    height: 100vh;
+    top: var(--banner-h);
+    height: calc(100vh - var(--banner-h));
     display: flex;
     flex-direction: column;
 }
@@ -725,17 +767,26 @@ body {
 
 /* ---------------- Mobile (<= 900px) ---------------- */
 @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
+    .layout { grid-template-columns: 1fr; min-height: calc(100vh - var(--banner-h-mobile)); }
 
-    .topbar { display: flex; }
-    .menu-toggle { display: flex; align-items: center; justify-content: center; }
+    .banner {
+        height: var(--banner-h-mobile);
+        padding: 0 10px;
+        gap: 8px;
+    }
+    .banner-logo-svg { height: 36px; }
+    .banner-title { font-size: 15px; font-weight: 700; }
+    .banner-title-full { display: none; }
+    .banner-title-short { display: inline; }
+
+    .menu-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 22px; }
 
     .sidebar {
         position: fixed;
         top: 0; left: 0;
         width: min(86vw, 320px);
         height: 100dvh;
-        z-index: 10;
+        z-index: 11;
         transform: translateX(-100%);
         transition: transform 0.25s ease;
         padding: 16px 0 12px;
@@ -775,6 +826,12 @@ body {
     .external-links { margin-top: 24px; padding-top: 18px; }
     .link-list { flex-direction: column; gap: 10px; }
     .link-btn { width: 100%; justify-content: center; font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+    .banner-title { display: none; }
+    .banner { justify-content: space-between; }
+    .banner-logo-svg { height: 32px; }
 }
 
 @media (max-width: 380px) {
