@@ -1,6 +1,6 @@
 {
   "source": "plantilla_sitio.xlsx",
-  "generated_at": "2026-05-22T16:22:25.462965",
+  "generated_at": "2026-05-22T16:34:47.371443",
   "site_title": "QR Groupe SEB",
   "site_url": "https://jagilren.github.io/groupe_seb_qr/",
   "total_tags": 40,
@@ -83,7 +83,9 @@
       },
       "ficha_tecnica_url": null,
       "curva_url": null,
-      "resources": {}
+      "resources": {
+        "Specifications": "https://drive.google.com/file/d/1GP_5peG1Kz38IixfG8e5zMKi0f_HLmsc/view?usp=drive_link"
+      }
     },
     {
       "tag": "100-P-01B",
@@ -199,7 +201,10 @@
       },
       "ficha_tecnica_url": null,
       "curva_url": null,
-      "resources": {}
+      "resources": {
+        "Specifications": "https://drive.google.com/file/d/1GP_5peG1Kz38IixfG8e5zMKi0f_HLmsc/view?usp=drive_link",
+        "Handbook_Manual": "https://drive.google.com/file/d/1b1tp5_6Qi-BCIRfIfDii_a57OacD5pH2/view?usp=drive_link"
+      }
     },
     {
       "tag": "200-P-01B",
@@ -228,7 +233,10 @@
       },
       "ficha_tecnica_url": null,
       "curva_url": null,
-      "resources": {}
+      "resources": {
+        "Specifications": "https://drive.google.com/file/d/1GP_5peG1Kz38IixfG8e5zMKi0f_HLmsc/view?usp=drive_link",
+        "Handbook_Manual": "https://drive.google.com/file/d/1b1tp5_6Qi-BCIRfIfDii_a57OacD5pH2/view?usp=drive_link"
+      }
     },
     {
       "tag": "400-MX-01",
