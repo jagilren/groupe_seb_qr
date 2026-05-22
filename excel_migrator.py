@@ -110,6 +110,11 @@ class Item:
     def filename(self) -> str:
         return self.slug + ".html"
 
+    @property
+    def display_title(self) -> str:
+        servicio = (self.properties.get("SERVICIO") or "").strip() or "no definido"
+        return f"{self.tag} - {servicio}"
+
 
 # ─────────────────────────────────────────────────────────────────────────
 # Lectura de la plantilla
@@ -511,7 +516,7 @@ def render_category_index(category: str, items: list[Item]) -> str:
 
 def render_item_page(item: Item) -> str:
     parts = [
-        f'<header class="page-header"><h1>{h(item.title)}</h1>',
+        f'<header class="page-header"><h1>{h(item.display_title)}</h1>',
         f'<p class="breadcrumb">'
         f'<a href="../index.html">Inicio</a> / '
         f'<a href="index.html">{h(item.category)}</a> / '
@@ -1791,7 +1796,7 @@ def generate_site(items: list[Item], output_dir: Path, config: Optional[dict] = 
         for item in cat_items:
             sidebar_item = build_nav(grouped, rel_prefix="../", active_tag=item.tag)
             item_html = page_skeleton(
-                page_title=item.title,
+                page_title=item.display_title,
                 topbar_title=item.tag,
                 sidebar_html=sidebar_item,
                 content_html=render_item_page(item),
