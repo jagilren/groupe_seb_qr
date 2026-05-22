@@ -28,6 +28,24 @@ REPO_ROOT = Path(__file__).parent
 DEFAULT_INPUT = REPO_ROOT / "plantilla_sitio.xlsx"
 DEFAULT_OUTPUT = REPO_ROOT / "docs"
 TAG_RESOURCES_PATH = REPO_ROOT / "TAG_RESOURCES.xlsx"
+SITE_CONFIG_PATH = REPO_ROOT / "site_config.json"
+
+# Tema por defecto (overrideable vía site_config.json -> "theme")
+# Color de la barra del navegador en móvil (override desde theme["accent"] al cargar)
+_MOBILE_THEME_COLOR = "#0969da"
+
+DEFAULT_THEME = {
+    "accent": "#0969da",
+    "accent_hover": "#0550ae",
+    "banner_gradient": "linear-gradient(135deg, #0a3d8f 0%, #0969da 60%, #2778d9 100%)",
+    "banner_text": "#ffffff",
+    "banner_shadow": "0 4px 14px rgba(9,105,218,0.18)",
+    "content_bg": "#f5f7fa",
+    "card_bg": "#ffffff",
+    "text": "#1f2328",
+    "text_muted": "#57606a",
+    "border": "#e1e4e8",
+}
 
 # Recursos por TAG (TAG_RESOURCES.xlsx) — pares (columna, label visible en botón)
 TAG_RESOURCES_COLUMNS = [
@@ -110,6 +128,60 @@ def cell_hyperlink(cell) -> Optional[str]:
     if v.startswith(("http://", "https://")):
         return v
     return None
+
+
+def load_site_config(path: Path) -> dict:
+    """Lee site_config.json (opcional). Devuelve dict con defaults rellenados.
+
+    Schema:
+    {
+      "site_title": "...",
+      "banner_title_full": "...",
+      "banner_title_short": "...",
+      "site_url": "...",
+      "theme": { ...DEFAULT_THEME keys... }
+    }
+    """
+    cfg = {
+        "site_title": SITE_TITLE,
+        "banner_title_full": BANNER_TITLE_FULL,
+        "banner_title_short": BANNER_TITLE_SHORT,
+        "site_url": SITE_URL,
+        "theme": dict(DEFAULT_THEME),
+    }
+    if not path.exists():
+        print(f"   ℹ️  Sin site_config.json (usando tema por defecto)")
+        return cfg
+    user_cfg = json.loads(path.read_text(encoding="utf-8"))
+    for k in ("site_title", "banner_title_full", "banner_title_short", "site_url"):
+        if k in user_cfg:
+            cfg[k] = user_cfg[k]
+    if "theme" in user_cfg and isinstance(user_cfg["theme"], dict):
+        cfg["theme"].update(user_cfg["theme"])
+    print(f"🎨 Tema cargado de site_config.json")
+    return cfg
+
+
+def build_theme_override_css(theme: dict) -> str:
+    """Genera un bloque :root con las variables CSS sobrescritas desde el config.
+
+    Se appendea después de STYLES_CSS para que la cascada lo aplique encima de los defaults.
+    """
+    return f"""
+/* ---------------- Overrides desde site_config.json ---------------- */
+:root {{
+    --bg: {theme['card_bg']};
+    --border: {theme['border']};
+    --text: {theme['text']};
+    --text-muted: {theme['text_muted']};
+    --accent: {theme['accent']};
+    --accent-hover: {theme['accent_hover']};
+    --banner-bg: {theme['banner_gradient']};
+    --banner-text: {theme['banner_text']};
+    --banner-shadow: {theme['banner_shadow']};
+    --content-bg: {theme['content_bg']};
+}}
+"""
 
 
 def load_tag_resources(xlsx_path: Path) -> dict[str, dict[str, str]]:
@@ -287,7 +359,7 @@ def page_skeleton(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0969da">
+    <meta name="theme-color" content="{_MOBILE_THEME_COLOR}">
     <title>{h(page_title)} — {h(SITE_TITLE)}</title>
     <link rel="stylesheet" href="{rel_prefix}styles.css">
 </head>
@@ -524,6 +596,10 @@ STYLES_CSS = r""":root {
     --text-muted: #57606a;
     --accent: #0969da;
     --accent-hover: #0550ae;
+    --banner-bg: linear-gradient(135deg, #0a3d8f 0%, #0969da 60%, #2778d9 100%);
+    --banner-text: #ffffff;
+    --banner-shadow: 0 4px 14px rgba(9,105,218,0.18);
+    --content-bg: #f5f7fa;
     --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-hover: 0 4px 12px rgba(0,0,0,0.08);
     --radius: 8px;
@@ -536,7 +612,7 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
-    background: var(--bg);
+    background: var(--content-bg);
     color: var(--text);
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
@@ -553,11 +629,12 @@ body {
     position: sticky;
     top: 0;
     z-index: 8;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
+    background: var(--banner-bg);
+    color: var(--banner-text);
+    border-bottom: 0;
     height: var(--banner-h);
     padding: 0 24px;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    box-shadow: var(--banner-shadow);
 }
 .banner-logo {
     display: flex;
@@ -575,12 +652,13 @@ body {
     text-align: center;
     font-size: 20px;
     font-weight: 700;
-    color: var(--text);
+    color: var(--banner-text);
     letter-spacing: -0.01em;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 .banner-title-short { display: none; }
 
@@ -593,11 +671,11 @@ body {
     font-size: 24px;
     cursor: pointer;
     border-radius: var(--radius);
-    color: var(--text);
+    color: var(--banner-text);
     line-height: 1;
     flex-shrink: 0;
 }
-.menu-toggle:hover { background: var(--bg-alt); }
+.menu-toggle:hover { background: rgba(255,255,255,0.15); }
 
 /* ---------------- Search button + modal ---------------- */
 .search-toggle {
@@ -607,15 +685,15 @@ body {
     height: 44px;
     cursor: pointer;
     border-radius: var(--radius);
-    color: var(--text);
+    color: var(--banner-text);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
-.search-toggle:hover { background: var(--bg-alt); color: var(--accent); }
+.search-toggle:hover { background: rgba(255,255,255,0.15); }
 .search-toggle:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--banner-text);
     outline-offset: 2px;
 }
 
@@ -1628,8 +1706,10 @@ SCRIPT_JS = r"""document.addEventListener('DOMContentLoaded', function () {
 # ─────────────────────────────────────────────────────────────────────────
 # Generación del sitio
 # ─────────────────────────────────────────────────────────────────────────
-def generate_site(items: list[Item], output_dir: Path):
+def generate_site(items: list[Item], output_dir: Path, config: Optional[dict] = None):
     print(f"🏗️  Generando sitio en: {output_dir}")
+    if config is None:
+        config = load_site_config(SITE_CONFIG_PATH)
     grouped = group_by_category(items)
 
     # Limpiar docs/ preservando docs/assets/ (imágenes y otros recursos estáticos)
@@ -1644,8 +1724,9 @@ def generate_site(items: list[Item], output_dir: Path):
     else:
         output_dir.mkdir(parents=True)
 
-    # Assets estáticos
-    (output_dir / "styles.css").write_text(STYLES_CSS, encoding="utf-8")
+    # Assets estáticos (CSS = defaults + override de site_config.json)
+    final_css = STYLES_CSS + build_theme_override_css(config["theme"])
+    (output_dir / "styles.css").write_text(final_css, encoding="utf-8")
     (output_dir / "script.js").write_text(SCRIPT_JS, encoding="utf-8")
     (output_dir / ".nojekyll").write_text("", encoding="utf-8")
     print("   ✅ styles.css + script.js + .nojekyll")
@@ -1774,12 +1855,21 @@ def main():
         print(f"❌ No existe: {input_path}", file=sys.stderr)
         sys.exit(1)
 
+    # Cargar config y aplicar overrides de título/URL/color a los globals
+    config = load_site_config(SITE_CONFIG_PATH)
+    global SITE_TITLE, BANNER_TITLE_FULL, BANNER_TITLE_SHORT, SITE_URL, _MOBILE_THEME_COLOR
+    SITE_TITLE = config["site_title"]
+    BANNER_TITLE_FULL = config["banner_title_full"]
+    BANNER_TITLE_SHORT = config["banner_title_short"]
+    SITE_URL = config["site_url"]
+    _MOBILE_THEME_COLOR = config["theme"].get("accent", _MOBILE_THEME_COLOR)
+
     items, _ = load_items(input_path)
     if not items:
         print("❌ No hay TAGs en la plantilla", file=sys.stderr)
         sys.exit(1)
 
-    generate_site(items, output_dir)
+    generate_site(items, output_dir, config=config)
 
 
 if __name__ == "__main__":

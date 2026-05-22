@@ -1,0 +1,18 @@
+{
+  "site_title": "QR Groupe SEB",
+  "banner_title_full": "Documentación Técnica — PTAR STARnD",
+  "banner_title_short": "PTAR STARnD",
+  "site_url": "https://jagilren.github.io/groupe_seb_qr/",
+  "theme": {
+    "accent": "#7c3aed",
+    "accent_hover": "#6d28d9",
+    "banner_gradient": "linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 50%, #c4b5fd 100%)",
+    "banner_text": "#3b1f5e",
+    "banner_shadow": "0 4px 14px rgba(167,139,250,0.25)",
+    "content_bg": "#faf7ff",
+    "card_bg": "#ffffff",
+    "text": "#1f2328",
+    "text_muted": "#57606a",
+    "border": "#ece4f9"
+  }
+}
