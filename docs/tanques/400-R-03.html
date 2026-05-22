@@ -7,7 +7,7 @@
     <title>400-R-03 — QR Groupe SEB</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
-<body>
+<body data-rel="../">
     <div class="sidebar-backdrop" aria-hidden="true"></div>
     <header class="banner">
         <button class="menu-toggle" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">☰</button>
@@ -27,7 +27,30 @@
   <text x="70" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5" fill="#198754" text-anchor="middle">STARnD</text>
 </svg>
         </div>
+        <button class="search-toggle" aria-label="Buscar" aria-controls="search-modal" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+            </svg>
+        </button>
     </header>
+    <div class="search-modal" id="search-modal" hidden role="dialog" aria-label="Búsqueda" aria-modal="true">
+        <div class="search-modal-overlay" aria-hidden="true"></div>
+        <div class="search-modal-box" role="document">
+            <div class="search-modal-head">
+                <svg class="search-modal-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                </svg>
+                <input type="search" class="search-input" placeholder="Buscar TAG, función, marca…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Buscar">
+                <button class="search-modal-close" aria-label="Cerrar búsqueda">✕</button>
+            </div>
+            <div class="search-results" aria-live="polite"></div>
+            <div class="search-hint">
+                <kbd>Esc</kbd> para cerrar
+            </div>
+        </div>
+    </div>
     <div class="layout">
         <aside class="sidebar" id="sidebar">
             <div class="brand">

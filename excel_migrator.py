@@ -220,7 +220,7 @@ def page_skeleton(
     <title>{h(page_title)} — {h(SITE_TITLE)}</title>
     <link rel="stylesheet" href="{rel_prefix}styles.css">
 </head>
-<body>
+<body data-rel="{rel_prefix}">
     <div class="sidebar-backdrop" aria-hidden="true"></div>
     <header class="banner">
         <button class="menu-toggle" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">☰</button>
@@ -234,7 +234,30 @@ def page_skeleton(
         <div class="banner-logo banner-logo-right" aria-label="Cliente">
             {LOGO_CLIENT_SVG}
         </div>
+        <button class="search-toggle" aria-label="Buscar" aria-controls="search-modal" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+            </svg>
+        </button>
     </header>
+    <div class="search-modal" id="search-modal" hidden role="dialog" aria-label="Búsqueda" aria-modal="true">
+        <div class="search-modal-overlay" aria-hidden="true"></div>
+        <div class="search-modal-box" role="document">
+            <div class="search-modal-head">
+                <svg class="search-modal-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                </svg>
+                <input type="search" class="search-input" placeholder="Buscar TAG, función, marca…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Buscar">
+                <button class="search-modal-close" aria-label="Cerrar búsqueda">✕</button>
+            </div>
+            <div class="search-results" aria-live="polite"></div>
+            <div class="search-hint">
+                <kbd>Esc</kbd> para cerrar
+            </div>
+        </div>
+    </div>
     <div class="layout">
         <aside class="sidebar" id="sidebar">
             <div class="brand">
@@ -461,6 +484,172 @@ body {
     flex-shrink: 0;
 }
 .menu-toggle:hover { background: var(--bg-alt); }
+
+/* ---------------- Search button + modal ---------------- */
+.search-toggle {
+    background: transparent;
+    border: 0;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    border-radius: var(--radius);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.search-toggle:hover { background: var(--bg-alt); color: var(--accent); }
+.search-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.search-modal[hidden] { display: none; }
+.search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 16px 16px;
+}
+.search-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15,23,42,0.55);
+    backdrop-filter: blur(2px);
+    animation: search-fade-in 0.15s ease;
+}
+.search-modal-box {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    max-height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    animation: search-pop-in 0.18s ease;
+}
+@keyframes search-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes search-pop-in {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-modal-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+.search-modal-icon { color: var(--text-muted); flex-shrink: 0; }
+.search-input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 16px;
+    color: var(--text);
+    padding: 4px 0;
+    min-width: 0;
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-modal-close {
+    background: var(--bg-alt);
+    border: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.search-modal-close:hover { background: var(--border); color: var(--text); }
+
+.search-results {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 8px 8px;
+}
+.search-result {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    transition: background 0.1s ease;
+}
+.search-result + .search-result { margin-top: 2px; }
+.search-result:hover,
+.search-result.active {
+    background: rgba(9,105,218,0.10);
+    color: var(--accent);
+}
+.search-result-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.search-result-tag {
+    font-weight: 600;
+    font-size: 15px;
+}
+.search-result-cat {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+.search-result.active .search-result-cat { color: var(--accent); }
+.search-result-preview {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.search-result mark {
+    background: rgba(255,212,0,0.45);
+    color: inherit;
+    padding: 0 1px;
+    border-radius: 2px;
+}
+
+.search-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.search-hint {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+}
+.search-hint kbd {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: -apple-system, monospace;
+    font-size: 11px;
+    color: var(--text);
+}
+
+body.search-open { overflow: hidden; }
 
 .sidebar-backdrop {
     display: none;
@@ -780,6 +969,11 @@ body {
     .banner-title-short { display: inline; }
 
     .menu-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; font-size: 22px; }
+    .search-toggle { width: 40px; height: 40px; }
+    .search-modal { padding: 12px; align-items: flex-start; }
+    .search-modal-box { max-height: calc(100dvh - 24px); border-radius: 10px; }
+    .search-modal-head { padding: 10px 12px; }
+    .search-input { font-size: 16px; }  /* evita zoom de iOS */
 
     .sidebar {
         position: fixed;
@@ -919,6 +1113,179 @@ SCRIPT_JS = r"""document.addEventListener('DOMContentLoaded', function () {
             btn.setAttribute('aria-expanded', open ? 'true' : 'false');
         });
     });
+
+    // ─────────────────────────────────────────────────────────────
+    // Búsqueda
+    // ─────────────────────────────────────────────────────────────
+    var searchToggle = document.querySelector('.search-toggle');
+    var searchModal = document.querySelector('.search-modal');
+    var searchInput = document.querySelector('.search-input');
+    var searchResults = document.querySelector('.search-results');
+    var searchClose = document.querySelector('.search-modal-close');
+    var searchOverlay = document.querySelector('.search-modal-overlay');
+    var rel = document.body.getAttribute('data-rel') || '';
+
+    var searchIndex = null;       // cargado lazy
+    var searchLoading = false;
+    var activeResultIdx = -1;
+    var lastResults = [];
+
+    function escapeHtml(s) {
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function highlight(text, query) {
+        if (!query) return escapeHtml(text);
+        var lower = text.toLowerCase();
+        var q = query.toLowerCase();
+        var out = '', i = 0, idx;
+        while ((idx = lower.indexOf(q, i)) !== -1) {
+            out += escapeHtml(text.slice(i, idx));
+            out += '<mark>' + escapeHtml(text.slice(idx, idx + q.length)) + '</mark>';
+            i = idx + q.length;
+        }
+        out += escapeHtml(text.slice(i));
+        return out;
+    }
+
+    function loadIndex() {
+        if (searchIndex || searchLoading) return Promise.resolve(searchIndex || []);
+        searchLoading = true;
+        return fetch(rel + 'search-index.json')
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .then(function (data) { searchIndex = data; return data; })
+            .catch(function () { searchIndex = []; return []; })
+            .finally(function () { searchLoading = false; });
+    }
+
+    function openSearch() {
+        if (!searchModal) return;
+        searchModal.hidden = false;
+        document.body.classList.add('search-open');
+        searchToggle && searchToggle.setAttribute('aria-expanded', 'true');
+        loadIndex().then(function () {
+            // foco al input después del paint para que en móvil aparezca el teclado
+            setTimeout(function () { searchInput && searchInput.focus(); }, 20);
+            renderResults(searchInput.value);
+        });
+    }
+
+    function closeSearch() {
+        if (!searchModal) return;
+        searchModal.hidden = true;
+        document.body.classList.remove('search-open');
+        searchToggle && searchToggle.setAttribute('aria-expanded', 'false');
+        activeResultIdx = -1;
+    }
+
+    function renderResults(query) {
+        if (!searchResults) return;
+        query = (query || '').trim();
+        if (!searchIndex) {
+            searchResults.innerHTML = '<div class="search-empty">Cargando índice…</div>';
+            return;
+        }
+        if (!query) {
+            // Sin query: mostrar todos (hasta 50)
+            lastResults = searchIndex.slice(0, 50);
+        } else {
+            var q = query.toLowerCase();
+            // Filtrar por substring en el haystack
+            var matches = [];
+            for (var i = 0; i < searchIndex.length; i++) {
+                if (searchIndex[i].haystack.indexOf(q) !== -1) {
+                    matches.push(searchIndex[i]);
+                }
+            }
+            // Ordenar: TAGs que empiezan con la query primero, luego por TAG alfabético
+            matches.sort(function (a, b) {
+                var aStarts = a.tag.toLowerCase().indexOf(q) === 0 ? 0 : 1;
+                var bStarts = b.tag.toLowerCase().indexOf(q) === 0 ? 0 : 1;
+                if (aStarts !== bStarts) return aStarts - bStarts;
+                return a.tag.localeCompare(b.tag);
+            });
+            lastResults = matches.slice(0, 50);
+        }
+
+        if (lastResults.length === 0) {
+            searchResults.innerHTML = '<div class="search-empty">Sin resultados para “' + escapeHtml(query) + '”.</div>';
+            activeResultIdx = -1;
+            return;
+        }
+
+        var html = '';
+        for (var j = 0; j < lastResults.length; j++) {
+            var r = lastResults[j];
+            html += '<a class="search-result" href="' + rel + r.url + '" data-idx="' + j + '">';
+            html += '<div class="search-result-head">';
+            html += '<span class="search-result-tag">' + highlight(r.tag, query) + '</span>';
+            html += '<span class="search-result-cat">' + escapeHtml(r.category) + '</span>';
+            html += '</div>';
+            if (r.preview) {
+                html += '<div class="search-result-preview">' + highlight(r.preview, query) + '</div>';
+            }
+            html += '</a>';
+        }
+        searchResults.innerHTML = html;
+        activeResultIdx = lastResults.length ? 0 : -1;
+        updateActiveResult();
+    }
+
+    function updateActiveResult() {
+        var nodes = searchResults.querySelectorAll('.search-result');
+        nodes.forEach(function (n, i) {
+            n.classList.toggle('active', i === activeResultIdx);
+        });
+        if (activeResultIdx >= 0 && nodes[activeResultIdx]) {
+            nodes[activeResultIdx].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    // Debounce del input
+    var searchTimer = null;
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function () {
+                renderResults(searchInput.value);
+            }, 80);
+        });
+        // Flechas + Enter para navegar resultados
+        searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (lastResults.length === 0) return;
+                activeResultIdx = (activeResultIdx + 1) % lastResults.length;
+                updateActiveResult();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (lastResults.length === 0) return;
+                activeResultIdx = (activeResultIdx - 1 + lastResults.length) % lastResults.length;
+                updateActiveResult();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeResultIdx >= 0 && lastResults[activeResultIdx]) {
+                    window.location.href = rel + lastResults[activeResultIdx].url;
+                }
+            }
+        });
+    }
+
+    if (searchToggle) searchToggle.addEventListener('click', openSearch);
+    if (searchClose) searchClose.addEventListener('click', closeSearch);
+    if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
+
+    // Esc cierra (sobreescribe el handler genérico de Esc para sidebar si la búsqueda está abierta)
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && searchModal && !searchModal.hidden) {
+            e.stopPropagation();
+            closeSearch();
+        }
+    }, true);  // capture phase para correr antes del Esc del sidebar
 });
 """
 
@@ -1020,7 +1387,32 @@ def generate_site(items: list[Item], output_dir: Path):
     (output_dir / "migration_metadata.json").write_text(
         json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8"
     )
-    print("   ✅ README.md + migration_metadata.json")
+
+    # Índice de búsqueda (cargado por search.js en el cliente)
+    search_index = []
+    for it in items:
+        # Texto plano de todo el contenido para hacer búsquedas substring
+        haystack_parts = [it.tag, it.category, it.title]
+        for k, v in it.properties.items():
+            haystack_parts.append(k)
+            haystack_parts.append(v)
+        haystack = " ".join(haystack_parts).lower()
+        search_index.append({
+            "tag": it.tag,
+            "category": it.category,
+            "title": it.title,
+            "url": f"{it.category.lower()}/{it.filename}",
+            "haystack": haystack,
+            # Vista previa: primeras 2 propiedades con valor
+            "preview": " · ".join(
+                f"{k}: {v[:60]}" for k, v in list(it.properties.items())[:2]
+            ),
+        })
+    (output_dir / "search-index.json").write_text(
+        json.dumps(search_index, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    print("   ✅ README.md + migration_metadata.json + search-index.json")
     print()
     print(f"✅ {total_items} TAGs publicados en {output_dir}/")
     print(f"   Por categoría: " + ", ".join(
