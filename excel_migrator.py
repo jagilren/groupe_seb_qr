@@ -66,11 +66,15 @@ class Item:
     properties: dict[str, str] = field(default_factory=dict)
     ficha_tecnica_url: Optional[str] = None
     curva_url: Optional[str] = None
+    images: list[str] = field(default_factory=list)  # nombres de archivo (1.png, 2.jpeg…)
+
+    @property
+    def slug(self) -> str:
+        return self.tag.replace(" ", "").replace("/", "_")
 
     @property
     def filename(self) -> str:
-        # Slug del TAG para archivo: quita espacios y barras
-        return self.tag.replace(" ", "").replace("/", "_") + ".html"
+        return self.slug + ".html"
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -157,6 +161,18 @@ def load_items(xlsx_path: Path) -> tuple[list[Item], list[str]]:
             curva_url=curva_url,
         ))
 
+    # Cargar manifest de imágenes (si existe) y asignarlo a cada item
+    manifest_path = DEFAULT_OUTPUT / "assets" / "images" / "manifest.json"
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for it in items:
+            if it.slug in manifest:
+                it.images = manifest[it.slug]
+        with_imgs = sum(1 for it in items if it.images)
+        print(f"   📷 {with_imgs} TAGs con imágenes cargadas del manifest")
+    else:
+        print(f"   ℹ️  Sin manifest de imágenes (corre convert_fichas_to_template.py primero si las quieres)")
+
     print(f"   {len(items)} TAGs cargados, {len(prop_columns)} propiedades posibles")
     return items, prop_columns
 
@@ -241,6 +257,17 @@ def page_skeleton(
             </svg>
         </button>
     </header>
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-label="Galería de imágenes" aria-modal="true">
+        <div class="lightbox-overlay" aria-hidden="true"></div>
+        <button class="lightbox-close" aria-label="Cerrar galería">✕</button>
+        <button class="lightbox-prev" aria-label="Imagen anterior">‹</button>
+        <button class="lightbox-next" aria-label="Imagen siguiente">›</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" alt="">
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+        <div class="lightbox-counter" aria-live="polite">1 / 1</div>
+    </div>
     <div class="search-modal" id="search-modal" hidden role="dialog" aria-label="Búsqueda" aria-modal="true">
         <div class="search-modal-overlay" aria-hidden="true"></div>
         <div class="search-modal-box" role="document">
@@ -357,6 +384,28 @@ def render_item_page(item: Item) -> str:
         f'<span>{h(item.tag)}</span></p>',
         '</header>',
     ]
+
+    # Galería de imágenes (si el TAG tiene)
+    if item.images:
+        img_urls = [
+            f"../assets/images/{item.slug}/{fname}" for fname in item.images
+        ]
+        # data-images: JSON con las URLs (escapar comillas)
+        data_attr = json.dumps(img_urls).replace('"', '&quot;')
+        n = len(item.images)
+        label = f"Ver imagen" if n == 1 else f"Ver {n} imágenes"
+        parts.append(
+            f'<button class="gallery-btn" data-images="{data_attr}" '
+            f'data-tag="{h(item.tag)}">'
+            f'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" '
+            f'stroke="currentColor" stroke-width="2" stroke-linecap="round" '
+            f'stroke-linejoin="round" aria-hidden="true">'
+            f'<rect x="3" y="3" width="18" height="18" rx="2"/>'
+            f'<circle cx="9" cy="9" r="1.5" fill="currentColor"/>'
+            f'<polyline points="3 17 9 12 14 16 17 13 21 17"/>'
+            f'</svg>'
+            f'<span>{label}</span></button>'
+        )
 
     if item.properties:
         parts.append('<div class="accordion">')
@@ -650,6 +699,135 @@ body {
 }
 
 body.search-open { overflow: hidden; }
+
+/* ---------------- Galería / lightbox ---------------- */
+.gallery-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--accent);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+.gallery-btn:hover {
+    background: rgba(9,105,218,0.08);
+    border-color: var(--accent);
+}
+.gallery-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.lightbox[hidden] { display: none; }
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.lightbox-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15,23,42,0.92);
+    animation: search-fade-in 0.15s ease;
+}
+.lightbox-figure {
+    position: relative;
+    margin: 0;
+    max-width: 92vw;
+    max-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: search-pop-in 0.2s ease;
+}
+.lightbox-img {
+    max-width: 92vw;
+    max-height: calc(100vh - 140px);
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    background: #ffffff;
+}
+.lightbox-caption {
+    color: rgba(255,255,255,0.9);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 92vw;
+}
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    background: rgba(255,255,255,0.1);
+    border: 0;
+    color: white;
+    cursor: pointer;
+    transition: background 0.12s ease, transform 0.12s ease;
+    z-index: 1;
+    line-height: 1;
+}
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: rgba(255,255,255,0.25);
+}
+.lightbox-close {
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 22px;
+}
+.lightbox-prev,
+.lightbox-next {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    font-size: 38px;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4px;  /* corrección visual del chevron */
+}
+.lightbox-prev { left: 24px; }
+.lightbox-next { right: 24px; }
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    transform: translateY(-50%) scale(1.05);
+}
+.lightbox.single .lightbox-prev,
+.lightbox.single .lightbox-next,
+.lightbox.single .lightbox-counter { display: none; }
+.lightbox-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+}
+body.lightbox-open { overflow: hidden; }
 
 .sidebar-backdrop {
     display: none;
@@ -975,6 +1153,15 @@ body.search-open { overflow: hidden; }
     .search-modal-head { padding: 10px 12px; }
     .search-input { font-size: 16px; }  /* evita zoom de iOS */
 
+    .gallery-btn { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
+    .lightbox-prev,
+    .lightbox-next { width: 44px; height: 44px; font-size: 32px; }
+    .lightbox-prev { left: 8px; }
+    .lightbox-next { right: 8px; }
+    .lightbox-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 20px; }
+    .lightbox-img { max-height: calc(100dvh - 130px); }
+    .lightbox-counter { bottom: 14px; font-size: 12px; padding: 5px 12px; }
+
     .sidebar {
         position: fixed;
         top: 0; left: 0;
@@ -1286,6 +1473,89 @@ SCRIPT_JS = r"""document.addEventListener('DOMContentLoaded', function () {
             closeSearch();
         }
     }, true);  // capture phase para correr antes del Esc del sidebar
+
+    // ─────────────────────────────────────────────────────────────
+    // Lightbox / galería de imágenes
+    // ─────────────────────────────────────────────────────────────
+    var lightbox = document.getElementById('lightbox');
+    var lbImg = lightbox && lightbox.querySelector('.lightbox-img');
+    var lbCaption = lightbox && lightbox.querySelector('.lightbox-caption');
+    var lbCounter = lightbox && lightbox.querySelector('.lightbox-counter');
+    var lbPrev = lightbox && lightbox.querySelector('.lightbox-prev');
+    var lbNext = lightbox && lightbox.querySelector('.lightbox-next');
+    var lbClose = lightbox && lightbox.querySelector('.lightbox-close');
+    var lbOverlay = lightbox && lightbox.querySelector('.lightbox-overlay');
+    var lbImages = [];
+    var lbCurrent = 0;
+    var lbTag = '';
+    var lbTouchStartX = null;
+
+    function lbRender() {
+        if (!lbImages.length) return;
+        var url = lbImages[lbCurrent];
+        lbImg.src = url;
+        lbImg.alt = lbTag + ' — imagen ' + (lbCurrent + 1);
+        lbCaption.textContent = lbTag + ' — ' + (lbCurrent + 1) + ' / ' + lbImages.length;
+        lbCounter.textContent = (lbCurrent + 1) + ' / ' + lbImages.length;
+        lightbox.classList.toggle('single', lbImages.length <= 1);
+    }
+    function lbOpen(images, tag) {
+        if (!lightbox || !images || !images.length) return;
+        lbImages = images.slice();
+        lbCurrent = 0;
+        lbTag = tag || '';
+        lbRender();
+        lightbox.hidden = false;
+        document.body.classList.add('lightbox-open');
+    }
+    function lbCloseFn() {
+        if (!lightbox) return;
+        lightbox.hidden = true;
+        document.body.classList.remove('lightbox-open');
+        lbImg.src = '';  // libera memoria
+    }
+    function lbStep(delta) {
+        if (lbImages.length <= 1) return;
+        lbCurrent = (lbCurrent + delta + lbImages.length) % lbImages.length;
+        lbRender();
+    }
+
+    // Conectar los botones "Ver imágenes" de cada página
+    document.querySelectorAll('.gallery-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var raw = btn.getAttribute('data-images') || '[]';
+            try {
+                var imgs = JSON.parse(raw);
+                lbOpen(imgs, btn.getAttribute('data-tag') || '');
+            } catch (e) { /* ignore */ }
+        });
+    });
+
+    if (lbPrev) lbPrev.addEventListener('click', function () { lbStep(-1); });
+    if (lbNext) lbNext.addEventListener('click', function () { lbStep(1); });
+    if (lbClose) lbClose.addEventListener('click', lbCloseFn);
+    if (lbOverlay) lbOverlay.addEventListener('click', lbCloseFn);
+
+    // Teclado: ← → para navegar, Esc para cerrar
+    document.addEventListener('keydown', function (e) {
+        if (!lightbox || lightbox.hidden) return;
+        if (e.key === 'ArrowLeft') { e.preventDefault(); lbStep(-1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); lbStep(1); }
+        else if (e.key === 'Escape') { e.stopPropagation(); lbCloseFn(); }
+    }, true);
+
+    // Swipe touch en móvil
+    if (lightbox) {
+        lightbox.addEventListener('touchstart', function (e) {
+            lbTouchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        lightbox.addEventListener('touchend', function (e) {
+            if (lbTouchStartX === null) return;
+            var dx = e.changedTouches[0].clientX - lbTouchStartX;
+            if (Math.abs(dx) > 50) lbStep(dx < 0 ? 1 : -1);
+            lbTouchStartX = null;
+        }, { passive: true });
+    }
 });
 """
 
@@ -1297,10 +1567,17 @@ def generate_site(items: list[Item], output_dir: Path):
     print(f"🏗️  Generando sitio en: {output_dir}")
     grouped = group_by_category(items)
 
-    # Limpiar y crear docs/
+    # Limpiar docs/ preservando docs/assets/ (imágenes y otros recursos estáticos)
     if output_dir.exists():
-        shutil.rmtree(output_dir)
-    output_dir.mkdir(parents=True)
+        for entry in output_dir.iterdir():
+            if entry.name == "assets":
+                continue
+            if entry.is_dir():
+                shutil.rmtree(entry)
+            else:
+                entry.unlink()
+    else:
+        output_dir.mkdir(parents=True)
 
     # Assets estáticos
     (output_dir / "styles.css").write_text(STYLES_CSS, encoding="utf-8")

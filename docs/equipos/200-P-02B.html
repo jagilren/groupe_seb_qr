@@ -34,6 +34,17 @@
             </svg>
         </button>
     </header>
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-label="Galería de imágenes" aria-modal="true">
+        <div class="lightbox-overlay" aria-hidden="true"></div>
+        <button class="lightbox-close" aria-label="Cerrar galería">✕</button>
+        <button class="lightbox-prev" aria-label="Imagen anterior">‹</button>
+        <button class="lightbox-next" aria-label="Imagen siguiente">›</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" alt="">
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+        <div class="lightbox-counter" aria-live="polite">1 / 1</div>
+    </div>
     <div class="search-modal" id="search-modal" hidden role="dialog" aria-label="Búsqueda" aria-modal="true">
         <div class="search-modal-overlay" aria-hidden="true"></div>
         <div class="search-modal-box" role="document">
@@ -121,6 +132,7 @@
 <header class="page-header"><h1>200-P-02B</h1>
 <p class="breadcrumb"><a href="../index.html">Inicio</a> / <a href="index.html">EQUIPOS</a> / <span>200-P-02B</span></p>
 </header>
+<button class="gallery-btn" data-images="[&quot;../assets/images/200-P-02B/1.png&quot;]" data-tag="200-P-02B"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><polyline points="3 17 9 12 14 16 17 13 21 17"/></svg><span>Ver imagen</span></button>
 <div class="accordion">
 <div class="acc-item">
 <button class="acc-header" aria-expanded="false"><span class="acc-title">SERVICIO</span><span class="acc-chevron" aria-hidden="true">›</span></button>

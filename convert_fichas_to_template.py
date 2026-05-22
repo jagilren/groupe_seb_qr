@@ -25,7 +25,11 @@ Reglas:
 """
 
 import re
+import shutil
 import sys
+import xml.etree.ElementTree as ET
+import zipfile
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
@@ -40,6 +44,11 @@ from openpyxl.worksheet.datavalidation import DataValidation
 REPO_ROOT = Path(__file__).parent
 INPUT_DEFAULT = REPO_ROOT / "NP00033 Fichas Técnicas Equipos 20250408 DG.xlsx"
 OUTPUT = REPO_ROOT / "plantilla_sitio.xlsx"
+IMAGES_DIR = REPO_ROOT / "docs" / "assets" / "images"
+
+# Imágenes que aparecen en MÁS de este umbral de hojas se consideran plantilla
+# (logo, header, etc.) y se descartan. Solo se conservan las específicas del equipo.
+IMAGE_COMMON_THRESHOLD = 5
 
 CATEGORIES = ["EQUIPOS", "INSTRUMENTOS", "TANQUES"]
 
@@ -177,6 +186,128 @@ def extract_pairs(ws) -> dict[str, str]:
                     pairs[label] = value_str
             i += 1
     return pairs
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Extracción de imágenes embebidas en el Excel
+# ─────────────────────────────────────────────────────────────────────────
+_XLSX_NS = {
+    'r':    'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+    'main': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
+}
+
+
+def _resolve_target(base: str, target: str) -> str:
+    """Resuelve una ruta relativa estilo '../media/image1.png' contra una base."""
+    target = target.lstrip('/')
+    if target.startswith('../'):
+        # Subir niveles desde 'base' (que es la carpeta del archivo origen)
+        base_parts = base.split('/')[:-1]  # carpeta
+        while target.startswith('../'):
+            target = target[3:]
+            if base_parts:
+                base_parts.pop()
+        return '/'.join(base_parts + [target])
+    return '/'.join(base.split('/')[:-1] + [target])
+
+
+def _sheet_to_images_map(zf: zipfile.ZipFile) -> dict[str, list[str]]:
+    """Devuelve {sheet_name: [paths de imagen en el zip]} para cada hoja."""
+    wb_xml = ET.fromstring(zf.read('xl/workbook.xml'))
+    sheets = [{'name': s.get('name'),
+               'rid': s.get('{%s}id' % _XLSX_NS['r'])}
+              for s in wb_xml.find('main:sheets', _XLSX_NS)]
+    wb_rels = ET.fromstring(zf.read('xl/_rels/workbook.xml.rels'))
+    rid_to_target = {r.get('Id'): r.get('Target') for r in wb_rels}
+
+    result: dict[str, list[str]] = {}
+    for s in sheets:
+        sheet_path = 'xl/' + rid_to_target[s['rid']]
+        rels_path = sheet_path.replace('worksheets/', 'worksheets/_rels/') + '.rels'
+        if rels_path not in zf.namelist():
+            result[s['name']] = []
+            continue
+        sheet_rels = ET.fromstring(zf.read(rels_path))
+        drawing_target = next(
+            (r.get('Target') for r in sheet_rels
+             if 'drawing' in r.get('Type', '').lower()),
+            None,
+        )
+        if not drawing_target:
+            result[s['name']] = []
+            continue
+        drawing_path = _resolve_target(sheet_path, drawing_target)
+        drawing_rels_path = (
+            drawing_path.replace('drawings/', 'drawings/_rels/') + '.rels'
+        )
+        if drawing_rels_path not in zf.namelist():
+            result[s['name']] = []
+            continue
+        drawing_rels = ET.fromstring(zf.read(drawing_rels_path))
+        images = []
+        for r in drawing_rels:
+            if 'image' in r.get('Type', '').lower():
+                images.append(_resolve_target(drawing_path, r.get('Target')))
+        result[s['name']] = images
+    return result
+
+
+def extract_images(input_path: Path, images_dir: Path) -> dict[str, list[str]]:
+    """
+    Extrae las imágenes específicas de cada hoja del Excel origen a
+    images_dir/<TAG>/N.<ext> y devuelve un dict {TAG: [filenames]}.
+
+    Las imágenes comunes (plantilla, logos, headers) se descartan
+    automáticamente: aparecen en más de IMAGE_COMMON_THRESHOLD hojas.
+    """
+    print(f"🖼️  Extrayendo imágenes a: {images_dir}")
+    images_dir.mkdir(parents=True, exist_ok=True)
+
+    extracted: dict[str, list[str]] = {}
+    with zipfile.ZipFile(input_path) as zf:
+        sheet_to_images = _sheet_to_images_map(zf)
+
+        # Contar en cuántas hojas aparece cada imagen → descartar plantillas
+        usage = defaultdict(int)
+        for imgs in sheet_to_images.values():
+            for img in imgs:
+                usage[img] += 1
+
+        for sheet_name, image_paths in sheet_to_images.items():
+            specific = [p for p in image_paths
+                       if usage[p] <= IMAGE_COMMON_THRESHOLD]
+            if not specific:
+                continue
+            # Expandir el nombre de hoja a TAGs (igual que en process_workbook)
+            tags = expand_tags_from_sheet_name(sheet_name)
+            for tag in tags:
+                # Slug del TAG (mismo que en excel_migrator.Item.filename)
+                slug = tag.replace(' ', '').replace('/', '_')
+                tag_dir = images_dir / slug
+                tag_dir.mkdir(parents=True, exist_ok=True)
+                filenames: list[str] = []
+                for i, img_path in enumerate(specific, start=1):
+                    if img_path not in zf.namelist():
+                        continue
+                    ext = Path(img_path).suffix.lower()  # .png / .jpeg
+                    out_name = f"{i}{ext}"
+                    out_file = tag_dir / out_name
+                    with zf.open(img_path) as src, open(out_file, 'wb') as dst:
+                        shutil.copyfileobj(src, dst)
+                    filenames.append(out_name)
+                if filenames:
+                    extracted[slug] = filenames
+
+    # Escribir manifest para que el migrador lo lea
+    manifest = {tag: files for tag, files in sorted(extracted.items())}
+    manifest_path = images_dir / "manifest.json"
+    import json
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    print(f"   ✅ {len(extracted)} TAGs con imágenes, manifest.json escrito")
+    return extracted
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -334,6 +465,11 @@ def main():
         sys.exit(1)
 
     rows, prop_columns = process_workbook(input_path)
+
+    # Extraer imágenes embebidas del Excel origen a docs/assets/images/
+    print()
+    extract_images(input_path, IMAGES_DIR)
+    print()
 
     wb = Workbook()
     write_data_sheet(wb, rows, prop_columns)

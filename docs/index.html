@@ -34,6 +34,17 @@
             </svg>
         </button>
     </header>
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-label="Galería de imágenes" aria-modal="true">
+        <div class="lightbox-overlay" aria-hidden="true"></div>
+        <button class="lightbox-close" aria-label="Cerrar galería">✕</button>
+        <button class="lightbox-prev" aria-label="Imagen anterior">‹</button>
+        <button class="lightbox-next" aria-label="Imagen siguiente">›</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" alt="">
+            <figcaption class="lightbox-caption"></figcaption>
+        </figure>
+        <div class="lightbox-counter" aria-live="polite">1 / 1</div>
+    </div>
     <div class="search-modal" id="search-modal" hidden role="dialog" aria-label="Búsqueda" aria-modal="true">
         <div class="search-modal-overlay" aria-hidden="true"></div>
         <div class="search-modal-box" role="document">
