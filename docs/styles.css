@@ -257,7 +257,7 @@ body.search-open { overflow: hidden; }
 .gallery-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: var(--bg-alt);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -265,10 +265,25 @@ body.search-open { overflow: hidden; }
     font: inherit;
     font-size: 14px;
     font-weight: 600;
-    padding: 10px 16px;
+    padding: 6px 14px 6px 6px;  /* asimétrico: izq compensa el thumb */
     margin-bottom: 16px;
     cursor: pointer;
     transition: background 0.12s ease, border-color 0.12s ease;
+    line-height: 1.4;
+    min-height: 44px;  /* alto fijo para que el thumb no haga crecer el botón */
+}
+.gallery-btn-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: block;
+}
+.gallery-btn-label {
+    flex-shrink: 0;
 }
 .gallery-btn:hover {
     background: rgba(9,105,218,0.08);

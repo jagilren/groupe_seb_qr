@@ -73,6 +73,13 @@ LOGO_CLIENT_SVG = """<svg class="banner-logo-svg" viewBox="0 0 140 56" xmlns="ht
   <text x="70" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5" fill="#198754" text-anchor="middle">STARnD</text>
 </svg>"""
 
+# Fallback genérico para el thumbnail del botón "Ver imagen"
+GENERIC_IMAGE_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="3" width="18" height="18" rx="2"/>
+  <circle cx="9" cy="9" r="1.5" fill="#94a3b8"/>
+  <polyline points="3 17 9 12 14 16 17 13 21 17"/>
+</svg>"""
+
 # Orden fijo de las categorías en el sitio
 CATEGORY_ORDER = ["EQUIPOS", "INSTRUMENTOS", "TANQUES"]
 
@@ -520,18 +527,16 @@ def render_item_page(item: Item) -> str:
         # data-images: JSON con las URLs (escapar comillas)
         data_attr = json.dumps(img_urls).replace('"', '&quot;')
         n = len(item.images)
-        label = f"Ver imagen" if n == 1 else f"Ver {n} imágenes"
+        label = "Ver imagen" if n == 1 else f"Ver {n} imágenes"
+        thumb_src = img_urls[0]
+        fallback = "../assets/icons/generic-image.svg"
         parts.append(
             f'<button class="gallery-btn" data-images="{data_attr}" '
             f'data-tag="{h(item.tag)}">'
-            f'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" '
-            f'stroke="currentColor" stroke-width="2" stroke-linecap="round" '
-            f'stroke-linejoin="round" aria-hidden="true">'
-            f'<rect x="3" y="3" width="18" height="18" rx="2"/>'
-            f'<circle cx="9" cy="9" r="1.5" fill="currentColor"/>'
-            f'<polyline points="3 17 9 12 14 16 17 13 21 17"/>'
-            f'</svg>'
-            f'<span>{label}</span></button>'
+            f'<img class="gallery-btn-thumb" src="{thumb_src}" alt="" '
+            f'loading="lazy" '
+            f'onerror="this.onerror=null;this.src=\'{fallback}\'">'
+            f'<span class="gallery-btn-label">{label}</span></button>'
         )
 
     if item.properties:
@@ -847,7 +852,7 @@ body.search-open { overflow: hidden; }
 .gallery-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: var(--bg-alt);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -855,10 +860,25 @@ body.search-open { overflow: hidden; }
     font: inherit;
     font-size: 14px;
     font-weight: 600;
-    padding: 10px 16px;
+    padding: 6px 14px 6px 6px;  /* asimétrico: izq compensa el thumb */
     margin-bottom: 16px;
     cursor: pointer;
     transition: background 0.12s ease, border-color 0.12s ease;
+    line-height: 1.4;
+    min-height: 44px;  /* alto fijo para que el thumb no haga crecer el botón */
+}
+.gallery-btn-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: block;
+}
+.gallery-btn-label {
+    flex-shrink: 0;
 }
 .gallery-btn:hover {
     background: rgba(9,105,218,0.08);
@@ -1729,7 +1749,12 @@ def generate_site(items: list[Item], output_dir: Path, config: Optional[dict] = 
     (output_dir / "styles.css").write_text(final_css, encoding="utf-8")
     (output_dir / "script.js").write_text(SCRIPT_JS, encoding="utf-8")
     (output_dir / ".nojekyll").write_text("", encoding="utf-8")
-    print("   ✅ styles.css + script.js + .nojekyll")
+
+    # Icono genérico (fallback del thumbnail del botón "Ver imagen")
+    icons_dir = output_dir / "assets" / "icons"
+    icons_dir.mkdir(parents=True, exist_ok=True)
+    (icons_dir / "generic-image.svg").write_text(GENERIC_IMAGE_SVG, encoding="utf-8")
+    print("   ✅ styles.css + script.js + .nojekyll + assets/icons/generic-image.svg")
 
     # Home
     sidebar_home = build_nav(grouped, rel_prefix="")
