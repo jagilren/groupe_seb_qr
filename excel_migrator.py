@@ -62,16 +62,16 @@ SITE_URL = "https://jagilren.github.io/groupe_seb_qr/"
 BANNER_TITLE_FULL = "Documentación Técnica — PTAR STARnD"
 BANNER_TITLE_SHORT = "PTAR STARnD"
 
-# Placeholders SVG inline (reemplazar por los logos reales después)
-LOGO_RPCI_SVG = """<svg class="banner-logo-svg" viewBox="0 0 140 56" xmlns="http://www.w3.org/2000/svg" aria-label="RPCI">
-  <rect x="2" y="2" width="136" height="52" rx="8" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
-  <text x="70" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" letter-spacing="1.5" fill="#0969da" text-anchor="middle">RPCI</text>
-</svg>"""
+# Logos del banner — paths relativos a docs/ (overrideable vía site_config.json -> "logos")
+LOGO_LEFT_PATH = "assets/logos/LogoRPCI.png"
+LOGO_LEFT_ALT = "RPCI — Red Proyectos con Ingeniería"
+LOGO_RIGHT_PATH = "assets/logos/LogoCliente.png"
+LOGO_RIGHT_ALT = "Cliente"
 
-LOGO_CLIENT_SVG = """<svg class="banner-logo-svg" viewBox="0 0 140 56" xmlns="http://www.w3.org/2000/svg" aria-label="STARnD">
-  <rect x="2" y="2" width="136" height="52" rx="8" fill="#ffffff" stroke="#198754" stroke-width="2"/>
-  <text x="70" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5" fill="#198754" text-anchor="middle">STARnD</text>
-</svg>"""
+
+def render_logo(rel_prefix: str, path: str, alt: str) -> str:
+    """Emite el <img> del logo usando un path relativo al root de docs/."""
+    return f'<img class="banner-logo-img" src="{rel_prefix}{path}" alt="{h(alt)}">'
 
 # Fallback genérico para el thumbnail del botón "Ver imagen"
 GENERIC_IMAGE_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -160,6 +160,12 @@ def load_site_config(path: Path) -> dict:
         "banner_title_short": BANNER_TITLE_SHORT,
         "site_url": SITE_URL,
         "theme": dict(DEFAULT_THEME),
+        "logos": {
+            "left": LOGO_LEFT_PATH,
+            "left_alt": LOGO_LEFT_ALT,
+            "right": LOGO_RIGHT_PATH,
+            "right_alt": LOGO_RIGHT_ALT,
+        },
     }
     if not path.exists():
         print(f"   ℹ️  Sin site_config.json (usando tema por defecto)")
@@ -170,6 +176,8 @@ def load_site_config(path: Path) -> dict:
             cfg[k] = user_cfg[k]
     if "theme" in user_cfg and isinstance(user_cfg["theme"], dict):
         cfg["theme"].update(user_cfg["theme"])
+    if "logos" in user_cfg and isinstance(user_cfg["logos"], dict):
+        cfg["logos"].update(user_cfg["logos"])
     print(f"🎨 Tema cargado de site_config.json")
     return cfg
 
@@ -380,14 +388,14 @@ def page_skeleton(
     <header class="banner">
         <button class="menu-toggle" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">☰</button>
         <a class="banner-logo banner-logo-left" href="{rel_prefix}index.html" aria-label="Inicio">
-            {LOGO_RPCI_SVG}
+            {render_logo(rel_prefix, LOGO_LEFT_PATH, LOGO_LEFT_ALT)}
         </a>
         <h1 class="banner-title">
             <span class="banner-title-full">{h(BANNER_TITLE_FULL)}</span>
             <span class="banner-title-short">{h(BANNER_TITLE_SHORT)}</span>
         </h1>
         <div class="banner-logo banner-logo-right" aria-label="Cliente">
-            {LOGO_CLIENT_SVG}
+            {render_logo(rel_prefix, LOGO_RIGHT_PATH, LOGO_RIGHT_ALT)}
         </div>
         <button class="search-toggle" aria-label="Buscar" aria-controls="search-modal" aria-expanded="false">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -652,9 +660,11 @@ body {
     flex-shrink: 0;
     text-decoration: none;
 }
-.banner-logo-svg {
+.banner-logo-img {
     height: 48px;
     width: auto;
+    max-width: 160px;
+    object-fit: contain;
     display: block;
 }
 .banner-title {
@@ -1309,7 +1319,7 @@ body.lightbox-open { overflow: hidden; }
         padding: 0 10px;
         gap: 8px;
     }
-    .banner-logo-svg { height: 36px; }
+    .banner-logo-img { height: 36px; }
     .banner-title { font-size: 15px; font-weight: 700; }
     .banner-title-full { display: none; }
     .banner-title-short { display: inline; }
@@ -1321,7 +1331,8 @@ body.lightbox-open { overflow: hidden; }
     .search-modal-head { padding: 10px 12px; }
     .search-input { font-size: 16px; }  /* evita zoom de iOS */
 
-    .gallery-btn { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
+    .gallery-btn { width: 100%; justify-content: center; padding: 12px; font-size: 15px; gap: 8px; }
+    .gallery-btn-thumb { width: 18px; height: 18px; border-radius: 3px; }
     .lightbox-prev,
     .lightbox-next { width: 44px; height: 44px; font-size: 32px; }
     .lightbox-prev { left: 8px; }
@@ -1380,7 +1391,7 @@ body.lightbox-open { overflow: hidden; }
 @media (max-width: 480px) {
     .banner-title { display: none; }
     .banner { justify-content: space-between; }
-    .banner-logo-svg { height: 32px; }
+    .banner-logo-img { height: 32px; }
 }
 
 @media (max-width: 380px) {
@@ -1885,14 +1896,19 @@ def main():
         print(f"❌ No existe: {input_path}", file=sys.stderr)
         sys.exit(1)
 
-    # Cargar config y aplicar overrides de título/URL/color a los globals
+    # Cargar config y aplicar overrides de título/URL/color/logos a los globals
     config = load_site_config(SITE_CONFIG_PATH)
     global SITE_TITLE, BANNER_TITLE_FULL, BANNER_TITLE_SHORT, SITE_URL, _MOBILE_THEME_COLOR
+    global LOGO_LEFT_PATH, LOGO_LEFT_ALT, LOGO_RIGHT_PATH, LOGO_RIGHT_ALT
     SITE_TITLE = config["site_title"]
     BANNER_TITLE_FULL = config["banner_title_full"]
     BANNER_TITLE_SHORT = config["banner_title_short"]
     SITE_URL = config["site_url"]
     _MOBILE_THEME_COLOR = config["theme"].get("accent", _MOBILE_THEME_COLOR)
+    LOGO_LEFT_PATH = config["logos"]["left"]
+    LOGO_LEFT_ALT = config["logos"]["left_alt"]
+    LOGO_RIGHT_PATH = config["logos"]["right"]
+    LOGO_RIGHT_ALT = config["logos"]["right_alt"]
 
     items, _ = load_items(input_path)
     if not items:
